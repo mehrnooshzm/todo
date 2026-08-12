@@ -13,7 +13,11 @@ const Page = styled.div`
   justify-content: center;
   padding: 40px 16px;
   background-color: #ebebee;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
 `;
 
 const CardContainer = styled.div`
@@ -136,8 +140,8 @@ function App() {
         prev.map((t) =>
           t.id === editingTodo.id
             ? { ...t, title: title.trim(), dueDate: dueDate || null }
-            : t
-        )
+            : t,
+        ),
       );
       try {
         const res = await updateTodo(editingTodo.id, {
@@ -145,7 +149,7 @@ function App() {
           dueDate: dueDate || null,
         });
         setTodos((prev) =>
-          prev.map((t) => (t.id === editingTodo.id ? res.data : t))
+          prev.map((t) => (t.id === editingTodo.id ? res.data : t)),
         );
       } catch (err) {
         console.error("Failed to update todo:", err);
@@ -169,15 +173,23 @@ function App() {
   const handleToggle = async (todo) => {
     // Optimistic UI update: instantly flip completion status in state
     setTodos((prev) =>
-      prev.map((t) => (t.id === todo.id ? { ...t, completed: !t.completed } : t))
+      prev.map((t) =>
+        t.id === todo.id ? { ...t, completed: !t.completed } : t,
+      ),
     );
     try {
-      await updateTodo(todo.id, { completed: !todo.completed });
+      await updateTodo(todo.id, {
+        completed: !todo.completed,
+        title: todo.title,
+        dueDate: todo.dueDate,
+      });
     } catch (err) {
       console.error("Failed to update todo status:", err);
       // Revert state on network/server error
       setTodos((prev) =>
-        prev.map((t) => (t.id === todo.id ? { ...t, completed: todo.completed } : t))
+        prev.map((t) =>
+          t.id === todo.id ? { ...t, completed: todo.completed } : t,
+        ),
       );
     }
   };
@@ -212,7 +224,11 @@ function App() {
   const isEmpty = todos.length === 0;
 
   const titleText = isEmpty ? "" : isAllCompleted ? "Completed" : "In Progress";
-  const displayCount = isEmpty ? "" : isAllCompleted ? completedCount : activeCount;
+  const displayCount = isEmpty
+    ? ""
+    : isAllCompleted
+      ? completedCount
+      : activeCount;
 
   return (
     <Page>
@@ -220,21 +236,21 @@ function App() {
       <CardContainer>
         {/* Header section displaying list status, count badge, and add task trigger */}
         <HeaderRow>
-            { isEmpty ? (
-              <HeaderLeft>
-                <Inbox size={16} strokeWidth={2.2} color="#8e8e93" />
-              </HeaderLeft>
-            ) : (
-              <HeaderLeft>
-                {isAllCompleted ? (
-                  <CheckCircle2 size={16} strokeWidth={2.2} color="#34c759" />
-                ) : (
-                  <Clock size={16} strokeWidth={2.2} color="#8e8e93" />
-                )}
-                <ColumnTitle>{titleText}</ColumnTitle>
-                <CountBadge>{displayCount}</CountBadge>
-              </HeaderLeft>
-            ) }
+          {isEmpty ? (
+            <HeaderLeft>
+              <Inbox size={16} strokeWidth={2.2} color="#8e8e93" />
+            </HeaderLeft>
+          ) : (
+            <HeaderLeft>
+              {isAllCompleted ? (
+                <CheckCircle2 size={16} strokeWidth={2.2} color="#34c759" />
+              ) : (
+                <Clock size={16} strokeWidth={2.2} color="#8e8e93" />
+              )}
+              <ColumnTitle>{titleText}</ColumnTitle>
+              <CountBadge>{displayCount}</CountBadge>
+            </HeaderLeft>
+          )}
 
           <HeaderActions>
             <HeaderIconButton
@@ -265,15 +281,15 @@ function App() {
         onClose={() => setModalOpen(false)}
         onSubmit={handleModalSubmit}
         initialTitle={editingTodo ? editingTodo.title : ""}
-        initialDueDate={
-          editingTodo ? editingTodo.dueDate || editingTodo.due_date || "" : ""
-        }
+        initialDueDate={editingTodo ? editingTodo.dueDate : ""}
         isEdit={!!editingTodo}
+        isCreate={!editingTodo}
+        modalTitle={editingTodo ? "Edit Task" : "Add Task"}
+        submitLabel={editingTodo ? "Save Changes" : "Add Task"}
+        key={editingTodo ? editingTodo.id : "new-task"}
       />
     </Page>
   );
 }
 
 export default App;
-
-

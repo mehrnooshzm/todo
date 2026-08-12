@@ -6,7 +6,11 @@
 
 const db = require("../db");
 
-/** Helper function to format SQL DATE fields into YYYY-MM-DD strings without timezone conversion issues */
+/**
+ * Helper function to format SQL DATE fields into YYYY-MM-DD strings without timezone conversion issues.
+ * @param {string|Date|null} dateVal - Raw date value returned from the database.
+ * @returns {string|null} Formatted date string (YYYY-MM-DD), or null if no value was provided.
+ */
 const formatDate = (dateVal) => {
   if (!dateVal) return null;
   if (typeof dateVal === "string") return dateVal.split("T")[0];
@@ -19,11 +23,12 @@ const formatDate = (dateVal) => {
   return String(dateVal);
 };
 
-
 /**
  * GET /api/todos
  * Retrieves all todo records from the database.
  * Formats `completed` as boolean, and provides `dueDate` as YYYY-MM-DD string.
+ * @param {import('express').Request} req - Express request object.
+ * @param {import('express').Response} res - Express response object.
  */
 const getAllTodos = async (req, res) => {
   try {
@@ -46,8 +51,10 @@ const getAllTodos = async (req, res) => {
 /**
  * POST /api/todos
  * Creates a new todo item in the database with mandatory title and dueDate.
- * @param {string} req.body.title - Mandatory task title
- * @param {string} req.body.dueDate - Mandatory due date string (YYYY-MM-DD)
+ * @param {import('express').Request} req - Express request object.
+ * @param {string} req.body.title - Mandatory task title.
+ * @param {string} req.body.dueDate - Mandatory due date string (YYYY-MM-DD).
+ * @param {import('express').Response} res - Express response object.
  */
 const createTodo = async (req, res) => {
   try {
@@ -64,7 +71,7 @@ const createTodo = async (req, res) => {
     // Insert new todo row into database with dueDate column
     const [result] = await db.query(
       "INSERT INTO todos (title, completed, dueDate) VALUES (?, 0, ?)",
-      [title.trim(), dueDate.trim()]
+      [title.trim(), dueDate.trim()],
     );
 
     // Fetch inserted record by insertId
@@ -87,46 +94,75 @@ const createTodo = async (req, res) => {
 /**
  * PUT /api/todos/:id
  * Updates an existing todo item's title, completed status, and/or dueDate by ID.
- * @param {number} req.params.id - Todo ID parameter
- * @param {string} [req.body.title] - Updated title
- * @param {boolean} [req.body.completed] - Updated completion status
- * @param {string} [req.body.dueDate] - Updated dueDate string
+ * Only fields present in the request body are updated (dynamic partial update);
+ * fields that are omitted are left untouched in the database.
+ * @param {import('express').Request} req - Express request object.
+ * @param {number} req.params.id - Todo ID parameter.
+ * @param {string} [req.body.title] - Updated title (optional).
+ * @param {boolean} [req.body.completed] - Updated completion status (optional).
+ * @param {string} [req.body.dueDate] - Updated dueDate string (optional).
+ * @param {import('express').Response} res - Express response object.
  */
 const updateTodo = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
 
     // Check if target todo exists
-    const [existingRows] = await db.query(
-      "SELECT * FROM todos WHERE id = ?",
-      [id]
-    );
+    const [existingRows] = await db.query("SELECT * FROM todos WHERE id = ?", [
+      id,
+    ]);
 
     if (existingRows.length === 0) {
       return res.status(404).json({ error: "Todo not found" });
     }
 
-    const existing = existingRows[0];
-
     // Validate if title or dueDate are provided as empty strings
-    if (req.body.title !== undefined && (!req.body.title || !req.body.title.trim())) {
-      return res.status(400).json({ error: "Title is required and cannot be empty" });
+    if (
+      req.body.title !== undefined &&
+      (!req.body.title || !req.body.title.trim())
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Title is required and cannot be empty" });
     }
-    if (req.body.dueDate !== undefined && (!req.body.dueDate || !req.body.dueDate.trim())) {
-      return res.status(400).json({ error: "Due date is required and cannot be empty" });
+    if (
+      req.body.dueDate !== undefined &&
+      (!req.body.dueDate || !req.body.dueDate.trim())
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Due date is required and cannot be empty" });
     }
 
-    // Preserve existing title/completed/dueDate values if not explicitly provided
-    const title = req.body.title !== undefined ? req.body.title.trim() : existing.title;
-    const completed =
-      req.body.completed !== undefined ? (req.body.completed ? 1 : 0) : existing.completed;
-    const dueDate =
-      req.body.dueDate !== undefined ? req.body.dueDate.trim() : existing.dueDate;
+    // Build SET clause dynamically from only the fields present in the request body,
+    // so unrelated columns are never overwritten with stale/undefined values.
+    const fields = [];
+    const values = [];
 
-    // Execute update query in database with dueDate column
+    if (req.body.title !== undefined) {
+      fields.push("title = ?");
+      values.push(req.body.title.trim());
+    }
+    if (req.body.completed !== undefined) {
+      fields.push("completed = ?");
+      values.push(req.body.completed ? 1 : 0);
+    }
+    if (req.body.dueDate !== undefined) {
+      fields.push("dueDate = ?");
+      values.push(req.body.dueDate.trim());
+    }
+
+    // Nothing to update — reject rather than issuing a no-op query
+    if (fields.length === 0) {
+      return res.status(400).json({ error: "No fields provided to update" });
+    }
+
+    values.push(id);
+
+    // Execute dynamic update query in database
     await db.query(
-      "UPDATE todos SET title = ?, completed = ?, dueDate = ? WHERE id = ?",
-      [title, completed, dueDate, id]
+      `UPDATE todos SET ${fields.join(", ")} WHERE id = ?`,
+      values,
     );
 
     // Fetch updated record to return to client
@@ -145,27 +181,21 @@ const updateTodo = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
-
 /**
  * DELETE /api/todos/:id
  * Removes a todo record from the database by ID.
- * @param {number} req.params.id - Todo ID parameter
+ * @param {import('express').Request} req - Express request object.
+ * @param {number} req.params.id - Todo ID parameter.
+ * @param {import('express').Response} res - Express response object.
  */
 const deleteTodo = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
 
     // Check if target todo exists before deleting
-    const [existingRows] = await db.query(
-      "SELECT * FROM todos WHERE id = ?",
-      [id]
-    );
+    const [existingRows] = await db.query("SELECT * FROM todos WHERE id = ?", [
+      id,
+    ]);
 
     if (existingRows.length === 0) {
       return res.status(404).json({ error: "Todo not found" });
@@ -185,4 +215,3 @@ module.exports = {
   updateTodo,
   deleteTodo,
 };
-
