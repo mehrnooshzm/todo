@@ -26,6 +26,6 @@ toDoRouter.post("/", validateTitle, createTodo);
 // PUT /api/todos/:id - Update an existing todo item by ID (Optional title validation middleware)
 toDoRouter.put("/:id", validateOptionalTitle, updateTodo);
 
-// DELETE /api/todos/:id -deleteTodo);
-
+// DELETE /api/todos/:id - Delete a todo item by ID
+toDoRouter.delete("/:id", deleteTodo);
 module.exports = toDoRouter;
