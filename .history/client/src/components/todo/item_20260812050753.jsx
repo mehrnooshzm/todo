@@ -1,12 +1,6 @@
+import React from "react";
 import styled, { css } from "styled-components";
-import {
-  Check,
-  Trash2,
-  GripVertical,
-  Pencil,
-  Clock,
-  Calendar,
-} from "lucide-react";
+import { Check, Trash2, GripVertical, Pencil, Clock, Calendar } from "lucide-react";
 
 const Card = styled.div`
   display: flex;
@@ -74,8 +68,7 @@ const TitleText = styled.span`
   font-size: 15px;
   font-weight: 600;
   color: ${({ $completed }) => ($completed ? "#a0a0a5" : "#1c1c1e")};
-  text-decoration: ${({ $completed }) =>
-    $completed ? "line-through" : "none"};
+  text-decoration: ${({ $completed }) => ($completed ? "line-through" : "none")};
   word-break: break-word;
   cursor: pointer;
   text-align: left;
@@ -103,7 +96,7 @@ const getDueDateColor = (dueDateStr) => {
     targetDate = new Date(
       parseInt(parts[0], 10),
       parseInt(parts[1], 10) - 1,
-      parseInt(parts[2], 10),
+      parseInt(parts[2], 10)
     );
   } else {
     targetDate = new Date(dueDateStr);
@@ -140,9 +133,7 @@ const Checkbox = styled.button`
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  border: 1.5px solid
-    ${({ $completed, $iconColor }) =>
-      $completed ? "#34c759" : $iconColor || "#c7c7cc"};
+  border: 1.5px solid ${({ $completed, $iconColor }) => ($completed ? "#34c759" : $iconColor || "#c7c7cc")};
   background: ${({ $completed }) => ($completed ? "#34c759" : "transparent")};
   display: flex;
   align-items: center;
@@ -152,8 +143,7 @@ const Checkbox = styled.button`
   transition: all 0.15s ease;
 
   &:hover {
-    border-color: ${({ $completed, $iconColor }) =>
-      $completed ? "#30b753" : $iconColor || "#8e8e93"};
+    border-color: ${({ $completed, $iconColor }) => ($completed ? "#30b753" : $iconColor || "#8e8e93")};
   }
 `;
 
@@ -245,8 +235,8 @@ export default function ToDoItem({
               !todo.completed && dueDate
                 ? `Due Date: ${dueDate}`
                 : todo.completed
-                  ? "Completed"
-                  : "In Progress"
+                ? "Completed"
+                : "In Progress"
             }
           >
             {todo.completed ? (
@@ -270,3 +260,9 @@ export default function ToDoItem({
     </Card>
   );
 }
+
+
+
+
+
+
