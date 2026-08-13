@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import TodoList from "@/components/todo/list";
+import TodoList from "@/components/todo/TodoList";
 import TaskModal from "@/components/ui/modal";
 import { useState, useEffect } from "react";
 import { getTodos, createTodo, updateTodo, deleteTodo } from "@/services/toDo";
