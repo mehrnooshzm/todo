@@ -4,6 +4,7 @@ import TaskModal from "@/components/ui/modal";
 import { useState, useEffect } from "react";
 import { getTodos, createTodo, updateTodo, deleteTodo } from "@/services/toDo";
 import { Clock, CheckCircle2, Plus, Inbox } from "lucide-react";
+import toast from "react-hot-toast";
 
 const Page = styled.div`
   min-height: 100vh;
@@ -112,6 +113,7 @@ function App() {
         setTodos(res.data);
       } catch (err) {
         console.error("Failed to fetch todos:", err);
+        toast.error("Failed to load tasks");
       } finally {
         setLoading(false);
       }
@@ -151,17 +153,23 @@ function App() {
         setTodos((prev) =>
           prev.map((t) => (t.id === editingTodo.id ? res.data : t)),
         );
+        toast.success("Task updated successfully!");
+        setModalOpen(false);
       } catch (err) {
         console.error("Failed to update todo:", err);
         setTodos(prevTodos);
+        toast.error("Failed to update task");
       }
     } else {
       // Create new task
       try {
         const res = await createTodo(title, dueDate);
         setTodos((prev) => [...prev, res.data]);
+        toast.success("Task added successfully!");
+        setModalOpen(false);
       } catch (err) {
         console.error("Failed to create todo:", err);
+        toast.error("Failed to add task");
       }
     }
   };
@@ -183,6 +191,8 @@ function App() {
         title: todo.title,
         dueDate: todo.dueDate,
       });
+      const statusText = !todo.completed ? "completed" : "reopened";
+      toast.success(`Task ${statusText}!`);
     } catch (err) {
       console.error("Failed to update todo status:", err);
       // Revert state on network/server error
@@ -191,6 +201,7 @@ function App() {
           t.id === todo.id ? { ...t, completed: todo.completed } : t,
         ),
       );
+      toast.error("Failed to update task status");
     }
   };
 
@@ -203,9 +214,11 @@ function App() {
     setTodos((prev) => prev.filter((t) => t.id !== id));
     try {
       await deleteTodo(id);
+      toast.success("Task deleted successfully!");
     } catch (err) {
       console.error("Failed to delete todo:", err);
       setTodos(prevTodos);
+      toast.error("Failed to delete task");
     }
   };
 

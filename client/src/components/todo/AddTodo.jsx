@@ -1,6 +1,16 @@
+/**
+ * AddTodo Component
+ * Renders a form for adding or editing a todo item.
+ * Includes fields for task title and due date with form validation.
+ */
+
 import { useState, useRef } from "react";
 import styled from "styled-components";
 
+/**
+ * Panel - Styled form container
+ * Serves as the main form wrapper with flex layout and spacing
+ */
 const Panel = styled.form`
   width: 100%;
   background: #ffffff;
@@ -14,16 +24,29 @@ const Panel = styled.form`
   gap: 8px;
 `;
 
+/**
+ * Row - Flex container for horizontal layout
+ * Used to arrange form elements in a row with consistent spacing
+ */
 const Row = styled.div`
   display: flex;
   gap: 8px;
 `;
 
+/**
+ * Label - Styled form label
+ * Displays field labels with small font size and subtle color
+ */
 const Label = styled.label`
   font-size: 10px;
   color: #8e8e93;
 `;
 
+/**
+ * Input - Styled text input field
+ * Provides consistent styling for text and date inputs
+ * Includes focus state for better UX
+ */
 const Input = styled.input`
   width: 100%;
   padding: 10px 14px;
@@ -43,12 +66,20 @@ const Input = styled.input`
   }
 `;
 
+/**
+ * Actions - Container for form action buttons
+ * Positioned at the end of the form with consistent spacing
+ */
 const Actions = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 8px;
 `;
 
+/**
+ * CancelBtn - Styled cancel button
+ * Transparent background with hover effects
+ */
 const CancelBtn = styled.button`
   background: transparent;
   border: none;
@@ -65,6 +96,10 @@ const CancelBtn = styled.button`
   }
 `;
 
+/**
+ * SubmitBtn - Styled submit button
+ * Dark background with hover and disabled states
+ */
 const SubmitBtn = styled.button`
   background: #1c1c1e;
   border: none;
@@ -87,6 +122,17 @@ const SubmitBtn = styled.button`
   }
 `;
 
+/**
+ * AddTodo Component
+ *
+ * Props:
+ * @param {Function} onAdd - Callback function when form is submitted
+ * @param {Function} onCancel - Callback function when cancel button is clicked
+ * @param {string} [initialTitle=""] - Initial value for the title input (for edit mode)
+ * @param {string} [initialDueDate=""] - Initial value for the due date input (for edit mode)
+ * @param {string} [submitLabel="Add Task"] - Text displayed on the submit button
+ * @param {boolean} [isEdit=false] - Flag indicating if this is an edit form
+ */
 export default function AddTodo({
   onAdd,
   onCancel,
@@ -95,24 +141,40 @@ export default function AddTodo({
   submitLabel = "Add Task",
   isEdit = false,
 }) {
-  const today = new Date().toISOString().split("T")[0];
-
+  // State for task title input
   const [title, setTitle] = useState(initialTitle || "");
-  const [dueDate, setDueDate] = useState(initialDueDate || today);
+
+  // State for due date input, defaults to today if not in edit mode
+  const [dueDate, setDueDate] = useState(initialDueDate);
+
+  // Ref to the input element (can be used for focus management)
   const inputRef = useRef(null);
 
+  /**
+   * Handles form submission
+   * Validates that both title and due date are filled before calling onAdd callback
+   * Resets form fields only when in add mode (not edit mode)
+   */
   const handleSubmit = (e) => {
+    // Prevent default form submission behavior
     e.preventDefault();
+
+    // Validate that both fields are non-empty
     if (!title.trim() || !dueDate.trim()) return;
+
+    // Call parent's onAdd callback with trimmed values
     onAdd(title.trim(), dueDate.trim());
+
+    // Reset form only in add mode (not edit mode)
     if (!isEdit) {
       setTitle("");
-      setDueDate(today);
+      setDueDate("");
     }
   };
 
   return (
     <Panel onSubmit={handleSubmit}>
+      {/* Task Title Field */}
       <Label>Task Title *</Label>
       <Input
         ref={inputRef}
@@ -123,17 +185,18 @@ export default function AddTodo({
         required
       />
 
+      {/* Due Date Field */}
       <Label>Due Date *</Label>
       <Row>
         <Input
           type="date"
-          min={today}
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
           required
         />
       </Row>
 
+      {/* Form Action Buttons */}
       <Actions>
         <CancelBtn type="button" onClick={onCancel}>
           Cancel
