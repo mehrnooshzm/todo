@@ -4,7 +4,7 @@ A robust Express.js backend for the Todo application, featuring SQLite database 
 
 ---
 
-## 🌐 Live Deployment
+## Live Deployment
 
 **Backend API**: [https://todo-1-rfku.onrender.com/](https://todo-1-rfku.onrender.com/)
 
@@ -24,7 +24,7 @@ http://localhost:5000/api
 
 ---
 
-## ✨ Features
+## Features
 
 - **RESTful API**: Complete CRUD operations for todo items
 - **SQLite Database**: Lightweight, file-based database with automatic schema initialization
@@ -36,7 +36,7 @@ http://localhost:5000/api
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Runtime**: [Node.js](https://nodejs.org/) (v18+)
 - **Framework**: [Express.js](https://expressjs.com/) v5
@@ -46,7 +46,7 @@ http://localhost:5000/api
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 server/
@@ -66,7 +66,7 @@ server/
 
 ---
 
-## 🔌 API Endpoints
+## API Endpoints
 
 All endpoints are prefixed with `/api`:
 
@@ -137,8 +137,7 @@ Persists the new order of todos after drag-and-drop operations. The `order` fiel
   "title": "Buy groceries",
   "dueDate": "2026-01-15",
   "completed": false,
-  "order": 0,
-  "createdAt": "2026-01-01T10:00:00Z"
+  "order": 0
 }
 ```
 
@@ -152,7 +151,7 @@ Persists the new order of todos after drag-and-drop operations. The `order` fiel
 
 ---
 
-## ⚙️ Environment Configuration
+## Environment Configuration
 
 Create a `.env` file in the `server` directory:
 
@@ -204,7 +203,7 @@ The server will start on the port specified in `.env` (default: 5000).
 
 ---
 
-## 🗄️ Database
+## Database
 
 ### Automatic Initialization
 
@@ -217,11 +216,13 @@ On server startup, the following occurs automatically:
 CREATE TABLE IF NOT EXISTS todos (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   title TEXT NOT NULL,
-  completed INTEGER DEFAULT 0,
-  dueDate TEXT,
-  createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+  completed INTEGER NOT NULL DEFAULT 0,
+  dueDate TEXT DEFAULT NULL,
+  `order` INTEGER DEFAULT 0
 )
 ```
+
+> **Note**: The `order` column tracks each task's visual position and is what the `PUT /todos/sort` endpoint updates after drag-and-drop. For databases created before this column existed, `db.js` runs an `ALTER TABLE` migration on startup to add it automatically. There is no `createdAt` column — timestamps are not currently tracked.
 
 ### Database Location
 
@@ -235,7 +236,7 @@ You can customize this by setting `DB_PATH` in `.env`.
 
 ---
 
-## 📦 Scripts
+## Scripts
 
 ```bash
 # Start production server
@@ -247,7 +248,7 @@ npm run dev
 
 ---
 
-## 🔐 Error Handling
+## Error Handling
 
 The server handles common errors gracefully:
 
@@ -261,7 +262,7 @@ The server handles common errors gracefully:
 
 ---
 
-## 🌍 Deployment
+## Deployment
 
 ### Deploying to Render
 
@@ -282,7 +283,7 @@ The server handles common errors gracefully:
 
 ---
 
-## 🤝 Related Projects
+## Related Projects
 
 - **Frontend Repository**: [todo-app-client](https://github.com/yourusername/todo-app-client)
   - Deployed at: [https://todo-app-wit.vercel.app/](https://todo-app-wit.vercel.app/)
@@ -290,7 +291,7 @@ The server handles common errors gracefully:
 
 ---
 
-## 📝 Notes
+## Notes
 
 - The SQLite database is file-based and persisted on the server
 - CORS is configured to accept requests from the frontend deployment
@@ -299,7 +300,7 @@ The server handles common errors gracefully:
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 **Port 5000 already in use?**
 
@@ -317,9 +318,3 @@ PORT=3001
 
 - Ensure backend is running and accessible from frontend domain
 - Check CORS configuration in `app.js`
-
----
-
-## 📄 License
-
-ISC

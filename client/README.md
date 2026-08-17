@@ -4,7 +4,7 @@ A modern, responsive Todo List application built with **React 19**, **Vite**, an
 
 ---
 
-## 🌐 Live Deployment
+## Live Deployment
 
 **Frontend**: [https://todo-app-wit.vercel.app/](https://todo-app-wit.vercel.app/)
 
@@ -12,29 +12,31 @@ Hosted on **Vercel** for optimal performance and automatic deployments from Git.
 
 ---
 
-## ✨ Features
+## Features
 
 - **Task Management**: Create, edit, toggle completion status, and delete tasks.
 - **Drag & Drop Reordering**: Reorder tasks seamlessly using `@hello-pangea/dnd`.
 - **Dynamic Header & Counters**: Tracks active and completed task counts dynamically with visual status indicators.
 - **Optimistic UI Updates**: Instant interface feedback with automatic rollback on network/server errors.
-- **Modal Dialog**: Sleek pop-up modal interface for adding new tasks.
+- **Modal Dialog**: Sleek pop-up modal interface for both adding new tasks and editing existing ones.
 - **Modern Styling**: Custom-designed UI components using `styled-components` and `lucide-react` icons.
 - **Due Date Support**: Every task must include a `dueDate` (YYYY‑MM‑DD). UI shows due date with color‑coded status icons and places it in a dedicated row at the bottom of each card.
+- **Toast Notifications**: Instant success/error feedback for every action (add, edit, complete, delete, reorder) via `react-hot-toast`.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Framework**: [React 19](https://react.dev/) + [Vite 8](https://vite.dev/)
 - **Styling**: [Styled Components](https://styled-components.com/)
 - **Drag & Drop**: [@hello-pangea/dnd](https://github.com/hello-pangea/dnd)
 - **Icons**: [Lucide React](https://lucide.dev/)
 - **HTTP Client**: [Axios](https://axios-http.com/)
+- **Notifications**: [react-hot-toast](https://react-hot-toast.com/)
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 client/
@@ -52,7 +54,7 @@ client/
 
 ---
 
-## ⚙️ Environment Configuration
+## Environment Configuration
 
 Create a `.env` file in the root of the `client` directory to configure the backend API endpoint:
 
@@ -62,7 +64,7 @@ VITE_API_URL=http://localhost:5000
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Install Dependencies
 

@@ -1,190 +1,326 @@
-# React + Express + SQLite Todo Application
+# Todo App Server 🔧
 
-A modern, full-stack Todo application built with **React**, **Express.js**, and **SQLite**. Featuring an Apple-style user interface with drag-and-drop reordering, dynamic status icons, inline task editing, and automatic database setup.
-
----
-
-## 🌐 Live Deployment
-
-- **Frontend**: [https://todo-app-wit.vercel.app/](https://todo-app-wit.vercel.app/) (Deployed on Vercel)
-- **Backend API**: [https://todo-1-rfku.onrender.com/](https://todo-1-rfku.onrender.com/) (Deployed on Render)
+A robust Express.js backend for the Todo application, featuring SQLite database integration, RESTful API endpoints, and production-ready deployment. Handles CRUD operations for todo items with automatic database initialization.
 
 ---
 
-## 🚀 Features
+## Live Deployment
 
-- **CRUD Operations**: Add, view, edit (double-click or edit button), toggle completion, and delete tasks.
-- **Dynamic Task Icons**: Displays a `<Clock>` icon for pending/in-progress tasks and a `<Check>` icon for completed tasks.
-- **Due Date Support**: Every task includes a mandatory `dueDate` (YYYY‑MM‑DD). UI shows due date with color‑coded status icons and places it in a dedicated row at the bottom of each card.
-- **Drag-and-Drop Reordering**: Smooth task reordering using `@hello-pangea/dnd`. New order is automatically persisted to the database via the `/sort` API endpoint.
-- **Sort API**: `PUT /api/todos/sort` endpoint handles persistence of task order after drag-and-drop operations, maintaining consistent ordering across sessions.
-- **SQLite Integration**: SQLite database using `sqlite3` with automatic table creation on backend startup.
-- **Responsive UI**: Clean, modern card interface built with `styled-components` and `lucide-react` icons.
-- **Production Serving**: Express backend configured to serve Vite's static build output in production.
+**Backend API**: [https://todo-1-rfku.onrender.com/](https://todo-1-rfku.onrender.com/)
 
----
+Hosted on **Render** with persistent SQLite database storage.
 
-## 🛠️ Tech Stack
+### API Base URL (Production)
 
-### Frontend (`/client`)
+```
+https://todo-1-rfku.onrender.com/api
+```
 
-- **Framework**: React 19 + Vite
-- **Styling**: `styled-components`
-- **Icons**: `lucide-react`
-- **Drag & Drop**: `@hello-pangea/dnd`
-- **HTTP Client**: Axios
+### API Base URL (Development)
 
-### Backend (`/server`)
-
-- **Runtime**: Node.js + Express.js
-- **Database**: SQLite (`sqlite3`)
-- **Environment Management**: `dotenv`
-- **Dev Tools**: `nodemon`
+```
+http://localhost:5000/api
+```
 
 ---
 
-## 📋 Prerequisites
+## Features
 
-Before running the project, make sure you have:
-
-1. **Node.js** (v18 or higher)
-2. **npm** (comes with Node.js)
+- **RESTful API**: Complete CRUD operations for todo items
+- **SQLite Database**: Lightweight, file-based database with automatic schema initialization
+- **Automatic Table Setup**: Database and `todos` table created automatically on first run
+- **CORS Support**: Configured to work with frontend deployments
+- **Production Ready**: Serves static frontend builds and handles API requests
+- **Error Handling**: Comprehensive error responses with appropriate HTTP status codes
+- **Environment Configuration**: Flexible setup via `.env` file
 
 ---
 
-## 📁 Project Structure
+## Tech Stack
+
+- **Runtime**: [Node.js](https://nodejs.org/) (v18+)
+- **Framework**: [Express.js](https://expressjs.com/) v5
+- **Database**: [SQLite](https://www.sqlite.org/) (`sqlite3` npm package)
+- **Environment**: [dotenv](https://github.com/motdotla/dotenv)
+- **Dev Tools**: [nodemon](https://nodemon.io/) (auto-reload during development)
+
+---
+
+## Project Structure
 
 ```text
-reactExpress/
-├── client/                 # React Frontend (Vite)
-│   ├── src/
-│   │   ├── api/            # Axios instance configuration
-│   │   ├── components/     # UI & Todo components (item, list, modal, etc.)
-│   │   ├── services/       # API call handlers (getTodos, createTodo, etc.)
-│   │   ├── App.jsx         # Main App component
-│   │   └── main.jsx        # Entry point
-│   ├── .env                # Client environment variables (VITE_API_URL)
-│   └── package.json
-│
-├── server/                 # Express Backend
-│   ├── controllers/        # Route controllers (toDoController.js)
-│   ├── routes/             # API routes (toDoRoute.js)
-│   ├── app.js              # Express app setup & server entry point
-│   ├── db.js               # SQLite connection & auto-table initialization
-│   ├── .env                # Database & server environment variables
-│   ├── .env.example        # Example environment configuration
-│   └── package.json
-│
+server/
+├── controllers/
+│   └── toDoController.js    # Route handlers for CRUD operations
+├── routes/
+│   └── toDoRoute.js         # API route definitions
+├── middleware/
+│   └── validateToDo.js      # Input validation middleware
+├── app.js                   # Express server setup & configuration
+├── db.js                    # SQLite connection & initialization
+├── .env                     # Environment variables (DB path, port)
+├── .env.example             # Example environment configuration
+├── package.json             # Dependencies & scripts
 └── README.md
 ```
 
 ---
 
-## ⚙️ Environment Configuration
-
-### Backend (`server/.env`)
-
-Create or edit `server/.env` with your SQLite database path (optional):
-
-```env
-DB_PATH=./todo_db.sqlite
-PORT=5000
-```
-
-> **Note**: On server startup, SQLite automatically creates the database file and the `todos` table if they do not already exist.
-
-### Frontend (`client/.env`)
-
-Create or edit `client/.env`:
-
-```env
-VITE_API_URL=http://localhost:5000
-```
-
----
-
-## 🏁 How to Run
-
-### Step 1: Install Dependencies
-
-Open a terminal in the project root directory and run:
-
-**Backend Dependencies:**
-
-```bash
-cd server
-npm install
-```
-
-**Frontend Dependencies:**
-
-```bash
-cd ../client
-npm install
-```
-
----
-
-### Step 2: Verify Environment Variables
-
-Ensure `server/.env` is configured correctly with the SQLite database path (or leave it blank to use the default `todo_db.sqlite`).
-
----
-
-### Step 3: Start Development Mode
-
-Run the backend and frontend in separate terminal windows:
-
-#### Terminal 1 (Backend):
-
-```bash
-cd server
-npm run dev
-# Or run with nodemon:
-npx nodemon app.js
-```
-
-_Server will start on `http://localhost:5000`._
-
-#### Terminal 2 (Frontend):
-
-```bash
-cd client
-npm run dev
-```
-
-_Vite dev server will start (typically on `http://localhost:5173`). Open this URL in your browser._
-
----
-
-### Step 4: Run in Production Mode
-
-To build the React frontend and serve it directly through the Express backend:
-
-1. **Build the client:**
-
-   ```bash
-   cd client
-   npm run build
-   ```
-
-2. **Start the Express server:**
-
-   ```bash
-   cd ../server
-   node app.js
-   ```
-
-3. **Access the application:**
-   Open `http://localhost:5000` in your web browser.
-
----
-
 ## 🔌 API Endpoints
 
-| Method     | Endpoint         | Description                | Request Body Example                                |
-| :--------- | :--------------- | :------------------------- | :-------------------------------------------------- |
-| **GET**    | `/api/todos`     | Fetch all todo items       | N/A                                                 |
-| **POST**   | `/api/todos`     | Create a new todo item     | `{ "title": "Buy groceries" }`                      |
-| **PUT**    | `/api/todos/:id` | Update title or completion | `{ "completed": true }` or `{ "title": "Updated" }` |
-| **DELETE** | `/api/todos/:id` | Delete a todo item         | N/A                                                 |
+All endpoints are prefixed with `/api`:
+
+| Method     | Endpoint      | Description                       | Request Body                                           |
+| ---------- | ------------- | --------------------------------- | ------------------------------------------------------ |
+| **GET**    | `/todos`      | Fetch all todo items              | N/A                                                    |
+| **POST**   | `/todos`      | Create a new todo                 | `{ "title": "Task name", "dueDate": "2026-01-15" }`    |
+| **PUT**    | `/todos/:id`  | Update todo (title/date/status)   | `{ "title": "Updated", "dueDate": "2026-01-20" }`      |
+| **PUT**    | `/todos/:id`  | Toggle completion status          | `{ "completed": true }`                                |
+| **PUT**    | `/todos/sort` | Reorder todos after drag-and-drop | `{ "todos": [{ "id": 1 }, { "id": 3 }, { "id": 2 }] }` |
+| **DELETE** | `/todos/:id`  | Delete a todo item                | N/A                                                    |
+
+### Due Date Support
+
+- **Mandatory Field**: Every todo **must** have a `dueDate` in `YYYY-MM-DD` format
+- **Accepted Formats**: Dates are stored and returned as ISO 8601 date strings (e.g., `"2026-01-15"`)
+- **Usage**: Include `dueDate` when creating or updating todos
+
+### Sort/Reorder API
+
+**Endpoint**: `PUT /api/todos/sort`
+
+Persists the new order of todos after drag-and-drop operations. The `order` field in the database tracks the visual position.
+
+**Request**:
+
+```json
+{
+  "todos": [{ "id": 3 }, { "id": 1 }, { "id": 2 }]
+}
+```
+
+**Response**: Returns all todos ordered by their new positions:
+
+```json
+[
+  {
+    "id": 3,
+    "title": "Third task",
+    "dueDate": "2026-01-20",
+    "completed": false,
+    "order": 0
+  },
+  {
+    "id": 1,
+    "title": "First task",
+    "dueDate": "2026-01-15",
+    "completed": true,
+    "order": 1
+  },
+  {
+    "id": 2,
+    "title": "Second task",
+    "dueDate": "2026-01-18",
+    "completed": false,
+    "order": 2
+  }
+]
+```
+
+### Response Format
+
+**Success Response (200)**:
+
+```json
+{
+  "id": 1,
+  "title": "Buy groceries",
+  "dueDate": "2026-01-15",
+  "completed": false,
+  "order": 0
+}
+```
+
+**Error Response (4xx/5xx)**:
+
+```json
+{
+  "error": "Error message describing what went wrong"
+}
+```
+
+---
+
+## Environment Configuration
+
+Create a `.env` file in the `server` directory:
+
+```env
+# Database path (optional, defaults to ./todo_db.sqlite)
+DB_PATH=./todo_db.sqlite
+
+# Server port (optional, defaults to 5000)
+PORT=5000
+
+# Node environment
+NODE_ENV=development
+```
+
+---
+
+## Getting Started
+
+### 1. Install Dependencies
+
+```bash
+cd server
+npm install
+```
+
+### 2. Configure Environment (Optional)
+
+Create a `.env` file with your preferred settings:
+
+```bash
+cp .env.example .env
+```
+
+### 3. Run Development Server
+
+```bash
+npm run dev
+```
+
+The server will start on `http://localhost:5000` with **nodemon** for auto-reloading.
+
+### 4. Run Production Server
+
+```bash
+npm start
+```
+
+The server will start on the port specified in `.env` (default: 5000).
+
+---
+
+## Database
+
+### Automatic Initialization
+
+On server startup, the following occurs automatically:
+
+1. **Database File Creation**: If `todo_db.sqlite` doesn't exist, it's created
+2. **Table Creation**: The `todos` table is created with the schema:
+
+```sql
+CREATE TABLE IF NOT EXISTS todos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  completed INTEGER NOT NULL DEFAULT 0,
+  dueDate TEXT DEFAULT NULL,
+  `order` INTEGER DEFAULT 0
+)
+```
+
+> **Note**: The `order` column tracks each task's visual position and is what the `PUT /todos/sort` endpoint updates after drag-and-drop. For databases created before this column existed, `db.js` runs an `ALTER TABLE` migration on startup to add it automatically. There is no `createdAt` column — timestamps are not currently tracked.
+
+### Database Location
+
+By default, the SQLite database file is stored at:
+
+```
+server/todo_db.sqlite
+```
+
+You can customize this by setting `DB_PATH` in `.env`.
+
+---
+
+## Scripts
+
+```bash
+# Start production server
+npm start
+
+# Start development server with auto-reload (nodemon)
+npm run dev
+```
+
+---
+
+## Error Handling
+
+The server handles common errors gracefully:
+
+| Status Code | Description                |
+| ----------- | -------------------------- |
+| **200**     | Success                    |
+| **201**     | Resource created           |
+| **400**     | Bad request (invalid data) |
+| **404**     | Todo not found             |
+| **500**     | Internal server error      |
+
+---
+
+## 🌍 Deployment
+
+### Deploying to Render
+
+1. **Create a Render Account**: Visit [render.com](https://render.com)
+2. **Connect Repository**: Link your GitHub repository
+3. **Configure Build & Start Commands**:
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+4. **Set Environment Variables**: Add `DB_PATH` and `PORT` in Render dashboard
+5. **Deploy**: Render will automatically deploy on each push to main branch
+
+### Deploying to Other Platforms
+
+- **Heroku**: Use Procfile with `web: npm start`
+- **Railway**: Auto-detects Node.js and runs start script
+- **Vercel**: Can host Node.js backend (serverless functions)
+- **AWS/DigitalOcean**: Standard Node.js deployment process
+
+---
+
+## Related Projects
+
+- **Frontend Repository**: [todo-app-client](https://github.com/yourusername/todo-app-client)
+  - Deployed at: [https://todo-app-wit.vercel.app/](https://todo-app-wit.vercel.app/)
+- **Full Stack Repository**: [reactExpress](https://github.com/yourusername/reactExpress)
+
+---
+
+## 📝 Notes
+
+- The SQLite database is file-based and persisted on the server
+- CORS is configured to accept requests from the frontend deployment
+- All API responses follow REST conventions
+- Timestamps are stored in ISO 8601 format
+
+---
+
+## Troubleshooting
+
+**Port 5000 already in use?**
+
+```bash
+# Change PORT in .env to a different port
+PORT=3001
+```
+
+**Database file not found?**
+
+- The database is automatically created on first run
+- Check `DB_PATH` environment variable
+
+**CORS errors from frontend?**
+
+- Ensure backend is running and accessible from frontend domain
+- Check CORS configuration in `app.js`
+
+---
+
+## 📄 License
+
+ISC
