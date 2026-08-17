@@ -74,7 +74,7 @@ export default function TaskModal({
   if (!isOpen) return null;
 
   return (
-    <Overlay onClick={onClose}>
+    <Overlay>
       <ModalBox onClick={(e) => e.stopPropagation()}>
         <Header>
           <Title>{modalTitle}</Title>

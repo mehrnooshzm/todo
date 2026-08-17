@@ -4,7 +4,7 @@
  * Includes fields for task title and due date with form validation.
  */
 
-import { useState} from "react";
+import { useState, useRef } from "react";
 import styled from "styled-components";
 
 /**
