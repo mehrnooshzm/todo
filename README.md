@@ -134,8 +134,8 @@ Persists the new order of todos after drag-and-drop operations. The `order` fiel
 ```json
 {
   "id": 1,
-  "title": "Buy groceries",
-  "dueDate": "2026-01-15",
+  "title": "Buy Chess Books",
+  "dueDate": "2026-09-9",
   "completed": false,
   "order": 0
 }
