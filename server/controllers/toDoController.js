@@ -209,9 +209,75 @@ const deleteTodo = async (req, res) => {
   }
 };
 
+/**
+ * PUT /api/todos/sort
+ * Updates the order/sequence of todo items based on the new sorted array received from the client.
+ * Processes the reordered list and updates the database with the new positions.
+ * This endpoint is called after drag-and-drop operations to persist the new task order.
+ * @param {import('express').Request} req - Express request object.
+ * @param {Array<{id: number, order?: number}>} req.body.todos - Array of todo objects with new order.
+ * @param {import('express').Response} res - Express response object.
+ */
+const sortTodos = async (req, res) => {
+  try {
+    // Extract the reordered todos array from request body
+    const { todos } = req.body;
+
+    // Validate that todos array was provided
+    if (!todos || !Array.isArray(todos)) {
+      return res.status(400).json({ error: "Todos array is required" });
+    }
+
+    // Validate that the array is not empty
+    if (todos.length === 0) {
+      return res.status(400).json({ error: "Todos array cannot be empty" });
+    }
+
+    // Process each todo in the new order and update its position in the database
+    for (let index = 0; index < todos.length; index++) {
+      const todo = todos[index];
+
+      // Validate that each todo has an id
+      if (!todo.id) {
+        return res
+          .status(400)
+          .json({ error: `Todo at index ${index} missing id` });
+      }
+
+      // Update the order/position for each todo in the database
+      // The order represents the visual position in the sorted list
+      await db.query("UPDATE todos SET `order` = ? WHERE id = ?", [
+        index,
+        todo.id,
+      ]);
+    }
+
+    // Fetch all todos in their new sorted order from the database
+    const [sortedTodos] = await db.query(
+      "SELECT * FROM todos ORDER BY `order` ASC",
+    );
+
+    // Format the response with properly formatted dates
+    const result = sortedTodos.map((t) => {
+      const formattedDate = formatDate(t.dueDate);
+      return {
+        ...t,
+        completed: !!t.completed,
+        dueDate: formattedDate,
+      };
+    });
+
+    // Return the newly sorted todos to the client
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   getAllTodos,
   createTodo,
   updateTodo,
   deleteTodo,
+  sortTodos,
 };

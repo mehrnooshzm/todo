@@ -15,8 +15,9 @@ A modern, full-stack Todo application built with **React**, **Express.js**, and 
 
 - **CRUD Operations**: Add, view, edit (double-click or edit button), toggle completion, and delete tasks.
 - **Dynamic Task Icons**: Displays a `<Clock>` icon for pending/in-progress tasks and a `<Check>` icon for completed tasks.
-- **Due Date Support**: Every task must include a `dueDate` (YYYY‑MM‑DD). UI shows due date with color‑coded status icons and places it in a dedicated row at the bottom of each card.
-- **Drag-and-Drop Reordering**: Smooth task reordering using `@hello-pangea/dnd`.
+- **Due Date Support**: Every task includes a mandatory `dueDate` (YYYY‑MM‑DD). UI shows due date with color‑coded status icons and places it in a dedicated row at the bottom of each card.
+- **Drag-and-Drop Reordering**: Smooth task reordering using `@hello-pangea/dnd`. New order is automatically persisted to the database via the `/sort` API endpoint.
+- **Sort API**: `PUT /api/todos/sort` endpoint handles persistence of task order after drag-and-drop operations, maintaining consistent ordering across sessions.
 - **SQLite Integration**: SQLite database using `sqlite3` with automatic table creation on backend startup.
 - **Responsive UI**: Clean, modern card interface built with `styled-components` and `lucide-react` icons.
 - **Production Serving**: Express backend configured to serve Vite's static build output in production.

@@ -70,13 +70,62 @@ server/
 
 All endpoints are prefixed with `/api`:
 
-| Method     | Endpoint     | Description              | Request Body                                        |
-| ---------- | ------------ | ------------------------ | --------------------------------------------------- |
-| **GET**    | `/todos`     | Fetch all todo items     | N/A                                                 |
-| **POST**   | `/todos`     | Create a new todo        | `{ "title": "Task name", "dueDate": "2026-01-15" }` |
-| **PUT**    | `/todos/:id` | Update todo (title/date) | `{ "title": "Updated", "dueDate": "2026-01-20" }`   |
-| **PATCH**  | `/todos/:id` | Toggle completion status | `{ "completed": true }`                             |
-| **DELETE** | `/todos/:id` | Delete a todo item       | N/A                                                 |
+| Method     | Endpoint      | Description                       | Request Body                                           |
+| ---------- | ------------- | --------------------------------- | ------------------------------------------------------ |
+| **GET**    | `/todos`      | Fetch all todo items              | N/A                                                    |
+| **POST**   | `/todos`      | Create a new todo                 | `{ "title": "Task name", "dueDate": "2026-01-15" }`    |
+| **PUT**    | `/todos/:id`  | Update todo (title/date/status)   | `{ "title": "Updated", "dueDate": "2026-01-20" }`      |
+| **PUT**    | `/todos/:id`  | Toggle completion status          | `{ "completed": true }`                                |
+| **PUT**    | `/todos/sort` | Reorder todos after drag-and-drop | `{ "todos": [{ "id": 1 }, { "id": 3 }, { "id": 2 }] }` |
+| **DELETE** | `/todos/:id`  | Delete a todo item                | N/A                                                    |
+
+### Due Date Support
+
+- **Mandatory Field**: Every todo **must** have a `dueDate` in `YYYY-MM-DD` format
+- **Accepted Formats**: Dates are stored and returned as ISO 8601 date strings (e.g., `"2026-01-15"`)
+- **Usage**: Include `dueDate` when creating or updating todos
+
+### Sort/Reorder API
+
+**Endpoint**: `PUT /api/todos/sort`
+
+Persists the new order of todos after drag-and-drop operations. The `order` field in the database tracks the visual position.
+
+**Request**:
+
+```json
+{
+  "todos": [{ "id": 3 }, { "id": 1 }, { "id": 2 }]
+}
+```
+
+**Response**: Returns all todos ordered by their new positions:
+
+```json
+[
+  {
+    "id": 3,
+    "title": "Third task",
+    "dueDate": "2026-01-20",
+    "completed": false,
+    "order": 0
+  },
+  {
+    "id": 1,
+    "title": "First task",
+    "dueDate": "2026-01-15",
+    "completed": true,
+    "order": 1
+  },
+  {
+    "id": 2,
+    "title": "Second task",
+    "dueDate": "2026-01-18",
+    "completed": false,
+    "order": 2
+  }
+]
+```
 
 ### Response Format
 
@@ -88,6 +137,7 @@ All endpoints are prefixed with `/api`:
   "title": "Buy groceries",
   "dueDate": "2026-01-15",
   "completed": false,
+  "order": 0,
   "createdAt": "2026-01-01T10:00:00Z"
 }
 ```

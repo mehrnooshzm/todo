@@ -2,7 +2,13 @@ import styled, { keyframes } from "styled-components";
 import TodoList from "@/components/todo/TodoList";
 import TaskModal from "@/components/ui/modal";
 import { useState, useEffect } from "react";
-import { getTodos, createTodo, updateTodo, deleteTodo } from "@/services/toDo";
+import {
+  getTodos,
+  createTodo,
+  updateTodo,
+  deleteTodo,
+  sortTodos,
+} from "@/services/toDo";
 import { Clock, CheckCircle2, Plus, Inbox, Loader } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -258,9 +264,24 @@ function App() {
   /**
    * Drag-and-drop reorder handler
    * Updates local state ordering following a drag drop operation.
+   * Calls the backend API to persist the new task order in the database.
    */
-  const handleReorder = (reordered) => {
+  const handleReorder = async (reordered) => {
+    // Optimistically update UI with new task order
     setTodos(reordered);
+
+    try {
+      // Send the reordered todos array to the backend to persist the new order
+      await sortTodos(reordered);
+      // Show success notification to user
+      toast.success("Tasks reordered successfully!");
+    } catch (err) {
+      // Log error details for debugging
+      console.error("Failed to save task order:", err);
+      // Notify user of the failure
+      toast.error("Failed to save task order");
+      // In a more robust app, we could fetch todos again to restore the correct order
+    }
   };
 
   // Dynamic header status calculation (active vs completed count)

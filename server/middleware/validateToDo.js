@@ -28,7 +28,7 @@ const validateTodoInput = (req, res, next) => {
 
 /**
  * Middleware for validating `title`/`dueDate` only if they were provided.
- * Use on the update (PUT/PATCH) route so partial/dynamic updates are allowed.
+ * Use on the update (PUT) route so partial/dynamic updates are allowed.
  * Fields that are absent are left untouched; fields that are present but empty are rejected.
  */
 const validateOptionalTodoInput = (req, res, next) => {

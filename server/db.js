@@ -51,18 +51,31 @@ const pool = new DatabaseWrapper(sqlite);
  */
 async function initDb() {
   try {
-    // Ensure `todos` table schema exists with dueDate field
+    // Ensure `todos` table schema exists with dueDate field and order column for drag-and-drop functionality
     await pool.query(`
       CREATE TABLE IF NOT EXISTS todos (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
         completed INTEGER NOT NULL DEFAULT 0,
-        dueDate TEXT DEFAULT NULL
+        dueDate TEXT DEFAULT NULL,
+        \`order\` INTEGER DEFAULT 0
       )
     `);
 
+    // Add `order` column to existing tables that don't have it (migration for existing databases)
+    try {
+      await pool.query(
+        `ALTER TABLE todos ADD COLUMN \`order\` INTEGER DEFAULT 0`,
+      );
+    } catch (err) {
+      // Column already exists, ignore the error
+      if (!err.message.includes("duplicate column")) {
+        throw err;
+      }
+    }
+
     console.log(
-      "SQLite database and table 'todos' ready with dueDate support.",
+      "SQLite database and table 'todos' ready with dueDate and order support.",
     );
   } catch (err) {
     console.error("SQLite Database initialization error:", err.message);

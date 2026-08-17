@@ -9,6 +9,7 @@ const {
   deleteTodo,
   createTodo,
   updateTodo,
+  sortTodos,
 } = require("../controllers/toDoController");
 const {
   validateTitle,
@@ -17,15 +18,26 @@ const {
 
 const toDoRouter = express.Router();
 
-// GET /api/todos - Fetch all todo items
+// ===== IMPORTANT: Route registration order matters =====
+// Specific routes (with literal paths like /sort) MUST come before
+// general/parameterized routes (like /:id) or Express will match
+// the parameterized route first
+
+// GET - Fetch all todo items
 toDoRouter.get("/", getAllTodos);
 
-// POST /api/todos - Create a new todo item (Requires valid non-empty title middleware)
+// POST - Create a new todo item
 toDoRouter.post("/", validateTitle, createTodo);
 
-// PUT /api/todos/:id - Update an existing todo item by ID (Optional title validation middleware)
+// PUT /sort - LITERAL PATH (must be FIRST before /:id route)
+// Update todo order after drag-and-drop operations
+toDoRouter.put("/sort", sortTodos);
+
+// PUT /:id - PARAMETERIZED PATH (comes after /sort)
+// Update an existing todo item by ID
 toDoRouter.put("/:id", validateOptionalTitle, updateTodo);
 
-// DELETE /api/todos/:id - Delete a todo item by ID
+// DELETE /:id - Delete a todo item by ID
 toDoRouter.delete("/:id", deleteTodo);
+
 module.exports = toDoRouter;
