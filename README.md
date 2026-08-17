@@ -1,4 +1,4 @@
-# Todo App Server 🔧
+# Todo App Server
 
 A robust Express.js backend for the Todo application, featuring SQLite database integration, RESTful API endpoints, and production-ready deployment. Handles CRUD operations for todo items with automatic database initialization.
 

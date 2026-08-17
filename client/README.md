@@ -1,4 +1,4 @@
-# Todo App Client 📝
+# Todo App Client
 
 A modern, responsive Todo List application built with **React 19**, **Vite**, and **Styled Components**. It features a clean, minimalist UI with drag-and-drop task reordering, modal-based task creation, inline title editing, and optimistic UI updates connected to an Express REST API backend.
 
