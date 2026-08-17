@@ -4,6 +4,13 @@ A modern, full-stack Todo application built with **React**, **Express.js**, and 
 
 ---
 
+## 🌐 Live Deployment
+
+- **Frontend**: [https://todo-app-wit.vercel.app/](https://todo-app-wit.vercel.app/) (Deployed on Vercel)
+- **Backend API**: [https://todo-1-rfku.onrender.com/](https://todo-1-rfku.onrender.com/) (Deployed on Render)
+
+---
+
 ## 🚀 Features
 
 - **CRUD Operations**: Add, view, edit (double-click or edit button), toggle completion, and delete tasks.

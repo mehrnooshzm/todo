@@ -1,10 +1,19 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import TodoList from "@/components/todo/TodoList";
 import TaskModal from "@/components/ui/modal";
 import { useState, useEffect } from "react";
 import { getTodos, createTodo, updateTodo, deleteTodo } from "@/services/toDo";
-import { Clock, CheckCircle2, Plus, Inbox } from "lucide-react";
+import { Clock, CheckCircle2, Plus, Inbox, Loader } from "lucide-react";
 import toast from "react-hot-toast";
+
+const spin = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
 
 const Page = styled.div`
   min-height: 100vh;
@@ -30,6 +39,30 @@ const CardContainer = styled.div`
   display: flex;
   flex-direction: column;
   background: #f4f4f6;
+`;
+
+const LoadingState = styled.div`
+  width: 100%;
+  padding: 40px 12px;
+  text-align: center;
+  color: #8e8e93;
+  font-size: 14px;
+  font-weight: 500;
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px dashed #d1d1d6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+`;
+
+const LoadingSpinner = styled.div`
+  animation: ${spin} 1s linear infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const HeaderRow = styled.div`
@@ -276,8 +309,15 @@ function App() {
           </HeaderActions>
         </HeaderRow>
 
-        {/* Todo Items List Component */}
-        {!loading && (
+        {/* Loading State or Todo Items List Component */}
+        {loading ? (
+          <LoadingState>
+            <LoadingSpinner>
+              <Loader size={24} strokeWidth={2.2} color="#8e8e93" />
+            </LoadingSpinner>
+            <span>Loading tasks...</span>
+          </LoadingState>
+        ) : (
           <TodoList
             todos={todos}
             onToggle={handleToggle}
