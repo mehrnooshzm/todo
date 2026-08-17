@@ -4,6 +4,14 @@ A modern, responsive Todo List application built with **React 19**, **Vite**, an
 
 ---
 
+## 🌐 Live Deployment
+
+**Frontend**: [https://todo-app-wit.vercel.app/](https://todo-app-wit.vercel.app/)
+
+Hosted on **Vercel** for optimal performance and automatic deployments from Git.
+
+---
+
 ## ✨ Features
 
 - **Task Management**: Create, edit, toggle completion status, and delete tasks.
@@ -87,4 +95,3 @@ npm run preview
 ```bash
 npm run lint
 ```
-
